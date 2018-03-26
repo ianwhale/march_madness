@@ -228,4 +228,4 @@ TSWLatexianTemp*
 __pycache__/
 *.pyc
 data/
-
+.ipynb_checkpoints/
