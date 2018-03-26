@@ -226,3 +226,6 @@ TSWLatexianTemp*
 .Rhistory
 
 __pycache__/
+*.pyc
+data/
+
