@@ -180,14 +180,14 @@ class Player:
         self._preRatingRD()
 
 
-def glicko_rounds(glicko, preds, df_sp):
+def glicko_rounds(glicko, preds, df):
     """
     Perform glicko trials.
     :param glicko: dict, (int, glicko2.Player), (teamID, team Glicko)
     :param preds: list, empty list for predictions.
-    :param df_sp: Pandas.DataFrame, dataframe trials should be performed on.
+    :param df: Pandas.DataFrame, dataframe trials should be performed on.
     """
-    for row in df_sp.itertuples():
+    for row in df.itertuples():
         w = row.WTeamID
         l = row.LTeamID
 
