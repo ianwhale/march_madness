@@ -59,10 +59,14 @@ for (start_year, mean), (_, stdev) in for_plot:
     plt.plot(space, mlab.normpdf(space, mean, stdev), label=start_year)
 
 plt.legend()
-plt.savefig("glicko_distributions.png", dpi=300)
+plt.xlabel("Glicko2 Mean Rating")
+plt.ylabel("Density")
+plt.savefig("./plots/glicko_distributions.png", dpi=300)
 plt.show()
 
 accuracies = sorted(accuracies.items(), key=lambda x: x[0])
 plt.plot([pair[0] for pair in accuracies], [pair[1] for pair in accuracies])
-plt.savefig("accuracies_by_start_year.png", dpi=300)
+plt.xlabel("Start Year")
+plt.ylabel("2017 Tournament Prediction Accuracy")
+plt.savefig("./plots/accuracies_by_start_year.png", dpi=300)
 plt.show()
