@@ -114,8 +114,9 @@ class Player:
         tau = self._tau
         x0 = a
         x1 = 0
-        
-        while x0 != x1:
+        eps = 1e-8
+
+        while abs(x0 - x1) > eps:
             # New iteration, so x(i) becomes x(i-1)
             x0 = x1
             d = math.pow(self.__rating, 2) + v + math.exp(x0)
@@ -177,3 +178,30 @@ class Player:
         
         """
         self._preRatingRD()
+
+
+def glicko_rounds(glicko, preds, df_sp):
+    """
+    Perform glicko trials.
+    :param glicko: dict, (int, glicko2.Player), (teamID, team Glicko)
+    :param preds: list, empty list for predictions.
+    :param df_sp: Pandas.DataFrame, dataframe trials should be performed on.
+    """
+    for row in df_sp.itertuples():
+        w = row.WTeamID
+        l = row.LTeamID
+
+        w_rating, l_rating = glicko[w].getRating(), glicko[l].getRating()
+        w_rd, l_rd = glicko[w].getRd(), glicko[l].getRd()
+
+        #
+        # We are predicting if the team with the lower ID wins.
+        # Glicko would predict the lower ID team to win if their glicko score was higher.
+        #
+        if w_rating > l_rating:
+            preds.append(1.)
+        else:
+            preds.append(0.)
+
+        glicko[w].update_player([l_rating], [l_rd], [1])
+        glicko[l].update_player([w_rating], [w_rd], [0])
