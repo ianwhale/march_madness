@@ -183,6 +183,7 @@ class Player:
 def glicko_rounds(glicko, preds, df):
     """
     Perform glicko trials.
+    Inspired by: https://www.kaggle.com/lpkirwin/fivethirtyeight-elo-ratings
     :param glicko: dict, (int, glicko2.Player), (teamID, team Glicko)
     :param preds: list, empty list for predictions.
     :param df: Pandas.DataFrame, dataframe trials should be performed on.
