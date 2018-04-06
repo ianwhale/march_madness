@@ -183,10 +183,12 @@ class Player:
 def glicko_rounds(glicko, preds, df):
     """
     Perform glicko trials.
+    Inspired by: https://www.kaggle.com/lpkirwin/fivethirtyeight-elo-ratings
     :param glicko: dict, (int, glicko2.Player), (teamID, team Glicko)
     :param preds: list, empty list for predictions.
     :param df: Pandas.DataFrame, dataframe trials should be performed on.
     """
+    w_glicko, l_glicko = [], []
     for row in df.itertuples():
         w = row.WTeamID
         l = row.LTeamID
@@ -194,9 +196,11 @@ def glicko_rounds(glicko, preds, df):
         w_rating, l_rating = glicko[w].getRating(), glicko[l].getRating()
         w_rd, l_rd = glicko[w].getRd(), glicko[l].getRd()
 
+        w_glicko.append(w_rating)
+        l_glicko.append(l_rating)
+
         #
         # We are predicting if the team with the lower ID wins.
-        # Glicko would predict the lower ID team to win if their glicko score was higher.
         #
         if w_rating > l_rating:
             preds.append(1.)
@@ -205,3 +209,5 @@ def glicko_rounds(glicko, preds, df):
 
         glicko[w].update_player([l_rating], [l_rd], [1])
         glicko[l].update_player([w_rating], [w_rd], [0])
+
+    return w_glicko, l_glicko
