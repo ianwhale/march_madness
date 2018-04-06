@@ -190,4 +190,4 @@ def getDataMatrix(df, year):
         rpis[id] = .25 *weighted_wps[id] + .5*owps[id] + .25*oowps[id]
         data_matrix.loc[data_matrix['team_id'] == id,'rpi'] = rpis[id]
     return data_matrix
-print(getDataMatrix(df,year))
+getDataMatrix(df,year).to_csv('dataMatrix.csv')
