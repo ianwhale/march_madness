@@ -31,16 +31,16 @@ def predict(defensive_efficiencies, preds, df):
 
 preds = []
 predict(defensive_efficiencies, preds, df_sp)
-print "Regular season results:",sum(preds) / len(preds)
+print ("Regular season results:",sum(preds) / len(preds))
 
 preds = []
 df = pd.read_csv('./data/ConferenceTourneyGames.csv')
 df_sp = df.loc[df['Season'] == year]
 predict(defensive_efficiencies, preds, df_sp)
-print "Conference tournement results:",sum(preds) / len(preds)
+print ("Conference tournement results:",sum(preds) / len(preds))
 
 preds = []
 df = pd.read_csv('./data/NCAATourneyCompactResults.csv')
 df_sp = df.loc[df['Season'] == year]
 predict(defensive_efficiencies, preds, df_sp)
-print "Tournement Results:",sum(preds) / len(preds)
+print ("Tournement Results:",sum(preds) / len(preds))

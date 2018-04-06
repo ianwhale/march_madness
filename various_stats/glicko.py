@@ -8,7 +8,6 @@ year = 2017
 df_sp = df.loc[df['Season'] == year]
 
 team_ids = set(df_sp.WTeamID).union(set(df_sp.LTeamID))
-len(team_ids)
 
 from glicko2 import Player
 
@@ -37,16 +36,16 @@ glicko_rounds(glicko, df_sp)
 
 preds = []
 predict(glicko, preds, df_sp)
-print "Regular season results:",sum(preds) / len(preds)
+print ("Regular season results:",sum(preds) / len(preds))
 
 preds = []
 df = pd.read_csv('./data/ConferenceTourneyGames.csv')
 df_sp = df.loc[df['Season'] == year]
 predict(glicko, preds, df_sp)
-print "Conference tournement results:",sum(preds) / len(preds)
+print ("Conference tournement results:",sum(preds) / len(preds))
 
 preds = []
 df = pd.read_csv('./data/NCAATourneyCompactResults.csv')
 df_sp = df.loc[df['Season'] == year]
 predict(glicko, preds, df_sp)
-print "Tournement Results:",sum(preds) / len(preds)
+print ("Tournement Results:",sum(preds) / len(preds))
