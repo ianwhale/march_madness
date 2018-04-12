@@ -286,7 +286,7 @@ def getDataMatrix(year = -1):
             #ids and labels
             data_matrix[row.Index]['id_1'] = row.LTeamID
             data_matrix[row.Index]['id_0'] = row.WTeamID
-            data_matrix[row.Index]['label'] = 1
+            data_matrix[row.Index]['label'] = 0
 
             #Basic statistics
             team_stats[row.LTeamID]['games'] += 1
@@ -531,7 +531,11 @@ def getDataMatrix(year = -1):
             data_matrix[row.Index]['pyth_exp_1'] = 1.0/(1 + (team_stats[row.LTeamID]['opp_points']*1.0/team_stats[row.LTeamID]['points'])**8)
             data_matrix[row.Index]['pyth_exp_0'] = 1.0/(1 + (team_stats[row.WTeamID]['opp_points']*1.0/team_stats[row.LTeamID]['points'])**8)
 
-    data_matrix = pd.DataFrame(data = data_matrix)
+    data_matrix = pd.DataFrame.from_dict(data_matrix, 'index')
+    cols = ['year', 'id_0', 'id_1', 'ftm_0', 'fta_0', 'fgm_0', 'fga_0', 'fgm3_0', 'fga3_0', 'ast_0', 'blk_0', 'or_0', 'dr_0', 'stl_0', 'to_0', 'pf_0', 'points_0', 'poss_0', 'opp_ftm_0', 'opp_fta_0', 'opp_fgm_0', 'opp_fga_0', 'opp_fgm3_0', 'opp_fga3_0', 'opp_ast_0', 'opp_blk_0', 'opp_or_0', 'opp_dr_0', 'opp_stl_0', 'opp_to_0', 'opp_pf_0', 'opp_points_0', 'pyth_exp_0', 'win_rate_0', 'opponents_win_rate_0', 'opponents_opponents_win_rate_0', 'weighted_win_rate_0', 'rpi_0', 'off_eff_0', 'def_eff_0', 'ftm_1', 'fta_1', 'fgm_1', 'fga_1', 'fgm3_1', 'fga3_1', 'ast_1', 'blk_1', 'or_1', 'dr_1', 'stl_1', 'to_1', 'pf_1', 'points_1', 'poss_1', 'opp_ftm_1', 'opp_fta_1', 'opp_fgm_1', 'opp_fga_1', 'opp_fgm3_1', 'opp_fga3_1', 'opp_ast_1', 'opp_blk_1', 'opp_or_1', 'opp_dr_1', 'opp_stl_1', 'opp_to_1', 'opp_pf_1', 'opp_points_1', 'pyth_exp_1', 'win_rate_1', 'opponents_win_rate_1', 'opponents_opponents_win_rate_1', 'weighted_win_rate_1', 'rpi_1', 'off_eff_1', 'def_eff_1', 'label']
+    data_matrix = data_matrix[cols]
     return data_matrix
 
-getDataMatrix(2017).to_csv('dataMatrix.csv')
+result = getDataMatrix(2017)
+result.to_csv('dataMatrix.csv')
+print("Data matrix created and saved to dataMatrix.csv")
