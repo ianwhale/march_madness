@@ -68,8 +68,8 @@ def main():
     accuracies = sorted(accuracies.items(), key=lambda x: x[0])
     plt.plot([pair[0] for pair in accuracies], [pair[1] for pair in accuracies])
     plt.xlabel("Start Year")
-    plt.ylabel("2017 Tournament Prediction Accuracy")
-    plt.savefig("./plots/accuracies_by_start_year.png", dpi=300)
+    plt.ylabel("Glicko-2 2017 Tournament Prediction Accuracy")
+    plt.savefig("./plots/glicko_accuracies_by_start_year.png", dpi=300)
     plt.show()
 
 
