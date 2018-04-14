@@ -45,7 +45,14 @@ def main():
 
     N = 25
     remove_outliers = True
-    outlier_spending = 15000000  # Teams that spend more than $15,000,000 on basketball are considered outliers.
+    spendings = list(spending2017.values())
+
+    if remove_outliers:
+        k = 1.5
+        q1, q3 = np.percentile(spendings, [25, 75])
+        iqr = q3 - q1
+        outlier_lb = q1 - k * iqr
+        outlier_up = q3 + k * iqr
 
     assert N == len(spending2017)
 
@@ -58,7 +65,7 @@ def main():
     if remove_outliers:
         inlier_spending, inlier_glicko, inlier_ids = [], [], []
         for tid, glicko, spending in zip(top_N_ids, top_N_glicko, ordered_spending):
-            if spending < outlier_spending:
+            if outlier_lb < spending < outlier_up:
                 inlier_spending.append(spending)
                 inlier_glicko.append(glicko)
                 inlier_ids.append(tid)
