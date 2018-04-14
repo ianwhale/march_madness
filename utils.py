@@ -32,3 +32,40 @@ def get_labels(df):
     :return: list, binary list, 1 if team with smaller ID value won, 0 otherwise.
     """
     return [int(row.WTeamID < row.LTeamID) for row in df.itertuples()]
+
+
+def remove_init_rows(df):
+    """
+    Rows corresponding to initialization values may be damaging to prediction accuracy as they are useless for learning.
+    So we can just remove them.
+    :param df: pd.DataFrame, data frame for prediction tasks.
+    """
+    return df[df.points_0 != 0][df.points_1 != 0]
+
+
+def get_data_and_labels(df):
+    """
+    We need to extract the labels and remove uninformative columns for doing any prediction.
+    :param df: pd.DataFrame, data for prediction tasks.
+    """
+    mat = df.drop(['Unnamed: 0', 'year', 'id_0', 'id_1'], axis=1).as_matrix()
+    return mat[:, :-1], mat[:, -1]
+
+
+def apply_preprocessing(data):
+    """
+    Preprocess the data by normalizing and centering at 0.
+    :param data: numpy.ndarray, data.
+    :return: numpy.ndarray.
+    """
+    pass
+
+
+def get_tournament(data, labels):
+    """
+    Get only the NCAA tournament part of the data.
+    :param data: numpy.ndarray, N x M
+    :param labels: numpy.ndarray, N x 1
+    :return: numpy.ndarray, numpy.ndarray
+    """
+    return data[:-63, :], labels[:-63, :]
