@@ -3,13 +3,11 @@
 #   - Show the covariance heatmap of the data.
 #
 
-import pickle
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from utils import remove_init_rows, get_data_and_labels
+from utils import remove_init_rows
 
 
 def main():
@@ -40,8 +38,6 @@ def main():
 
     plt.savefig("./plots/cov_plot.png", dpi=300)
     plt.show()
-
-    # X_train, X_test, y_train, y_test = train_test_split(data, labels, test_size=0.25)
 
 
 if __name__ == '__main__':
