@@ -1,16 +1,32 @@
 import numpy as np
 import pandas as pd
+from glicko2 import Player
+
+def glicko_rounds(glicko, df):
+    for row in df.itertuples():
+        w = row.WTeamID
+        l = row.LTeamID
+
+        w_rating, l_rating = glicko[w].getRating(), glicko[l].getRating()
+        w_rd, l_rd = glicko[w].getRd(), glicko[l].getRd()
+
+        glicko[w].update_player([l_rating], [l_rd], [1])
+        glicko[l].update_player([w_rating], [w_rd], [0])
 
 def getDataMatrix(years):
     """
     df: dataframe to calculate statistics on (Regular season, postseason tournements, both)
     year: year to analyze
     """
-    df = pd.read_csv('data/RegularSeasonDetailedResults.csv')
+    df_reg_season = pd.read_csv('data/RegularSeasonDetailedResults.csv')
+    df_ncaa_tourny = pd.read_csv('data/NCAATourneyDetailedResults.csv')
+    df = pd.concat([df_reg_season,df_ncaa_tourny])
+    df.sort_values(by=['DayNum'])
     df_sp = df.loc[df['Season'].isin(years)]
 
     team_ids = set(df_sp.WTeamID).union(set(df_sp.LTeamID))
 
+    glicko = dict(zip(list(team_ids), [Player() for _ in range(len(team_ids))]))
     team_results = {}
     team_stats = {}
     for id in team_ids:
@@ -23,6 +39,16 @@ def getDataMatrix(years):
     for row in df_sp.itertuples():
         data_matrix[row.Index] = {'year': data_matrix[row.Index]}
         if row.LTeamID < row.WTeamID:
+            #glicko
+            w_rating, l_rating = glicko[row.WTeamID].getRating(), glicko[row.LTeamID].getRating()
+            w_rd, l_rd = glicko[row.WTeamID].getRd(), glicko[row.LTeamID].getRd()
+
+            data_matrix[row.Index]['glicko_0'] = l_rating
+            data_matrix[row.Index]['glicko_1'] = w_rating
+
+            glicko[row.LTeamID].update_player([l_rating], [l_rd], [1])
+            glicko[row.WTeamID].update_player([w_rating], [w_rd], [0])
+
             #RPI and win percentage
             #win percentage
             temp = 0
@@ -306,6 +332,16 @@ def getDataMatrix(years):
             team_stats[row.WTeamID]['opp_pf'] += row.LPF
 
         else:
+            #glicko
+            w_rating, l_rating = glicko[row.WTeamID].getRating(), glicko[row.LTeamID].getRating()
+            w_rd, l_rd = glicko[row.WTeamID].getRd(), glicko[row.LTeamID].getRd()
+
+            data_matrix[row.Index]['glicko_1'] = l_rating
+            data_matrix[row.Index]['glicko_0'] = w_rating
+
+            glicko[row.LTeamID].update_player([l_rating], [l_rd], [1])
+            glicko[row.WTeamID].update_player([w_rating], [w_rd], [0])
+
             #win percentage
             temp = 0
             for game in team_results[row.LTeamID]:
@@ -589,7 +625,7 @@ def getDataMatrix(years):
             team_stats[row.WTeamID]['opp_pf'] += row.LPF
 
     data_matrix = pd.DataFrame.from_dict(data_matrix, 'index')
-    cols = ['year', 'id_0', 'id_1', 'ftm_0', 'fta_0', 'fgm_0', 'fga_0', 'fgm3_0', 'fga3_0', 'ast_0', 'blk_0', 'or_0', 'dr_0', 'stl_0', 'to_0', 'pf_0', 'points_0', 'poss_0', 'opp_ftm_0', 'opp_fta_0', 'opp_fgm_0', 'opp_fga_0', 'opp_fgm3_0', 'opp_fga3_0', 'opp_ast_0', 'opp_blk_0', 'opp_or_0', 'opp_dr_0', 'opp_stl_0', 'opp_to_0', 'opp_pf_0', 'opp_points_0', 'pyth_exp_0', 'win_rate_0', 'opponents_win_rate_0', 'opponents_opponents_win_rate_0', 'weighted_win_rate_0', 'rpi_0', 'off_eff_0', 'def_eff_0', 'ftm_1', 'fta_1', 'fgm_1', 'fga_1', 'fgm3_1', 'fga3_1', 'ast_1', 'blk_1', 'or_1', 'dr_1', 'stl_1', 'to_1', 'pf_1', 'points_1', 'poss_1', 'opp_ftm_1', 'opp_fta_1', 'opp_fgm_1', 'opp_fga_1', 'opp_fgm3_1', 'opp_fga3_1', 'opp_ast_1', 'opp_blk_1', 'opp_or_1', 'opp_dr_1', 'opp_stl_1', 'opp_to_1', 'opp_pf_1', 'opp_points_1', 'pyth_exp_1', 'win_rate_1', 'opponents_win_rate_1', 'opponents_opponents_win_rate_1', 'weighted_win_rate_1', 'rpi_1', 'off_eff_1', 'def_eff_1', 'label']
+    cols = ['year', 'id_0', 'id_1', 'ftm_0', 'fta_0', 'fgm_0', 'fga_0', 'fgm3_0', 'fga3_0', 'ast_0', 'blk_0', 'or_0', 'dr_0', 'stl_0', 'to_0', 'pf_0', 'points_0', 'poss_0', 'opp_ftm_0', 'opp_fta_0', 'opp_fgm_0', 'opp_fga_0', 'opp_fgm3_0', 'opp_fga3_0', 'opp_ast_0', 'opp_blk_0', 'opp_or_0', 'opp_dr_0', 'opp_stl_0', 'opp_to_0', 'opp_pf_0', 'opp_points_0', 'pyth_exp_0', 'win_rate_0', 'opponents_win_rate_0', 'opponents_opponents_win_rate_0', 'weighted_win_rate_0', 'rpi_0', 'off_eff_0', 'def_eff_0', 'glicko_0', 'ftm_1', 'fta_1', 'fgm_1', 'fga_1', 'fgm3_1', 'fga3_1', 'ast_1', 'blk_1', 'or_1', 'dr_1', 'stl_1', 'to_1', 'pf_1', 'points_1', 'poss_1', 'opp_ftm_1', 'opp_fta_1', 'opp_fgm_1', 'opp_fga_1', 'opp_fgm3_1', 'opp_fga3_1', 'opp_ast_1', 'opp_blk_1', 'opp_or_1', 'opp_dr_1', 'opp_stl_1', 'opp_to_1', 'opp_pf_1', 'opp_points_1', 'pyth_exp_1', 'win_rate_1', 'opponents_win_rate_1', 'opponents_opponents_win_rate_1', 'weighted_win_rate_1', 'rpi_1', 'off_eff_1', 'def_eff_1', 'glicko_1', 'label']
     data_matrix = data_matrix[cols]
     return data_matrix
 
