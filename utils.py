@@ -40,15 +40,26 @@ def remove_init_rows(df):
     So we can just remove them.
     :param df: pd.DataFrame, data frame for prediction tasks.
     """
-    return df[df.points_0 != 0][df.points_1 != 0]
+    df = df[df.points_0 != 0]
+    return df[df.points_1 != 0]
+
+
+def drop_irrelevant_columns(df):
+    """
+    Drop columns that do not have predictive quality.
+    :param df: pd.DataFrame.
+    :return: pd.DataFrame.
+    """
+    return df.drop(['Unnamed: 0', 'year', 'id_0', 'id_1'], axis=1)
 
 
 def get_data_and_labels(df):
     """
-    We need to extract the labels and remove uninformative columns for doing any prediction.
+    Get the labels and data matrices.
     :param df: pd.DataFrame, data for prediction tasks.
+    :return: np.ndarray
     """
-    mat = df.drop(['Unnamed: 0', 'year', 'id_0', 'id_1'], axis=1).as_matrix()
+    mat = df.as_matrix()
     return mat[:, :-1], mat[:, -1]
 
 
@@ -68,4 +79,4 @@ def get_tournament(data, labels):
     :param labels: numpy.ndarray, N x 1
     :return: numpy.ndarray, numpy.ndarray
     """
-    return data[:-63, :], labels[:-63, :]
+    return data[67:, :], data[:67, :],  labels[67:], labels[:67]

@@ -21,7 +21,13 @@ def main():
     df = df.drop(['Unnamed: 0', 'year', 'id_0', 'id_1'], axis=1)
     df = df.drop(['label'], axis=1)
 
+    print(df.head())
+
     cov = df.corr()
+
+    print(cov.shape)
+
+    exit()
 
     mask = np.zeros_like(cov, dtype=np.bool)
     mask[np.triu_indices_from(mask)] = True
