@@ -2,6 +2,9 @@
 # random_forest.py
 #   - Classify data into wins/losses with random forest.
 #
+# Validation accuracy: 0.9783950617283951
+# Testing accuracy: 0.9850746268656716
+#
 
 import os
 import pickle

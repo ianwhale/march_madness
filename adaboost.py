@@ -2,6 +2,9 @@
 # adaboost.py
 #   - Classify data into wins/losses with AdaBoost algorithm.
 #
+# Validation accuracy: 0.9614197530864198
+# Testing accuracy: 0.9402985074626866
+#
 
 import os
 import pickle
