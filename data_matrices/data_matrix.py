@@ -71,7 +71,7 @@ def getDataMatrix(years):
                 wwp0 = 0
             else:
                 wwp0 = temp/len(team_results[row.LTeamID])
-            data_matrix[row.Index]['win_rate_0'] = wwp0
+            data_matrix[row.Index]['weighted_win_rate_0'] = wwp0
 
             temp = 0.0
             for game in team_results[row.WTeamID]:
@@ -86,20 +86,6 @@ def getDataMatrix(years):
             else:
                 wwp1 = temp/len(team_results[row.WTeamID])
             data_matrix[row.Index]['weighted_win_rate_1'] = wwp1
-
-            temp = 0.0
-            for game in team_results[row.LTeamID]:
-                if game['loc'] == 'N':
-                    temp += 1*game['result']
-                elif game['loc'] == 'H':
-                    temp += 1.4*game['result']
-                else:
-                    temp += .6*game['result']
-            if len(team_results[row.LTeamID]) == 0:
-                wwp1 = 0
-            else:
-                wwp1 = temp/len(team_results[row.LTeamID])
-            data_matrix[row.Index]['weighted_win_rate_0'] = wwp1
 
             #Opponents win percentage
             temp = 0
@@ -237,8 +223,6 @@ def getDataMatrix(years):
             data_matrix[row.Index]['opp_pf_1'] = team_stats[row.WTeamID]['opp_pf']/team_stats[row.WTeamID]['games']
 
             #possesions and offensive/defensive defensive efficiencies
-            poss_0 = row.LFGA-row.LOR+row.LTO+(.4*row.LFTA)
-            poss_1 = row.WFGA-row.WOR+row.WTO+(.4*row.WFTA)
             data_matrix[row.Index]['poss_0'] = team_stats[row.LTeamID]['possesions']/team_stats[row.LTeamID]['games']
             data_matrix[row.Index]['poss_1'] = team_stats[row.WTeamID]['possesions']/team_stats[row.WTeamID]['games']
 
@@ -254,7 +238,7 @@ def getDataMatrix(years):
 
             data_matrix[row.Index]['def_eff_0'] = team_stats[row.LTeamID]['opp_points']/team_stats[row.LTeamID]['possesions']*100.0
             data_matrix[row.Index]['def_eff_1'] = team_stats[row.WTeamID]['opp_points']/team_stats[row.WTeamID]['possesions']*100.0
-            data_matrix[row.Index]['off_eff_0'] = team_stats[row.WTeamID]['points']/team_stats[row.LTeamID]['possesions']*100.0
+            data_matrix[row.Index]['off_eff_0'] = team_stats[row.LTeamID]['points']/team_stats[row.LTeamID]['possesions']*100.0
             data_matrix[row.Index]['off_eff_1'] = team_stats[row.WTeamID]['points']/team_stats[row.WTeamID]['possesions']*100.0
 
             if team_stats[row.LTeamID]['possesions'] == -1:
@@ -273,10 +257,12 @@ def getDataMatrix(years):
                 data_matrix[row.Index]['pyth_exp_1'] = 1.0/(1 + (team_stats[row.WTeamID]['opp_points']*1.0/team_stats[row.WTeamID]['points'])**8)
 
             #Update Basic statistics
-            team_stats[row.LTeamID]['possesions'] += row.LFGA-row.LOR+row.LTO+(.4*row.LFTA)
-            team_stats[row.WTeamID]['possesions'] += row.WFGA-row.WOR+row.WTO+(.4*row.WFTA)
-            team_stats[row.LTeamID]['games'] += 1
-            team_stats[row.WTeamID]['games'] += 1
+            poss_0 = row.LFGA-row.LOR+row.LTO+(.4*row.LFTA)
+            poss_1 = row.WFGA-row.WOR+row.WTO+(.4*row.WFTA)
+            team_stats[row.LTeamID]['possesions'] += poss_0
+            team_stats[row.WTeamID]['possesions'] += poss_1
+            team_stats[row.LTeamID]['games'] += 1.
+            team_stats[row.WTeamID]['games'] += 1.
             team_stats[row.LTeamID]['points'] += row.LScore
             team_stats[row.WTeamID]['points'] += row.WScore
             team_stats[row.LTeamID]['fgm'] += row.LFGM
@@ -529,8 +515,6 @@ def getDataMatrix(years):
             data_matrix[row.Index]['opp_pf_0'] = team_stats[row.WTeamID]['opp_pf']/team_stats[row.WTeamID]['games']
 
             #possesions and offensive/defensive defensive efficiencies
-            poss_1 = row.LFGA-row.LOR+row.LTO+(.4*row.LFTA)
-            poss_0 = row.WFGA-row.WOR+row.WTO+(.4*row.WFTA)
             data_matrix[row.Index]['poss_1'] = team_stats[row.LTeamID]['possesions']/team_stats[row.LTeamID]['games']
             data_matrix[row.Index]['poss_0'] = team_stats[row.WTeamID]['possesions']/team_stats[row.WTeamID]['games']
 
@@ -546,7 +530,7 @@ def getDataMatrix(years):
 
             data_matrix[row.Index]['def_eff_1'] = team_stats[row.LTeamID]['opp_points']/team_stats[row.LTeamID]['possesions']*100.0
             data_matrix[row.Index]['def_eff_0'] = team_stats[row.WTeamID]['opp_points']/team_stats[row.WTeamID]['possesions']*100.0
-            data_matrix[row.Index]['off_eff_1'] = team_stats[row.WTeamID]['points']/team_stats[row.LTeamID]['possesions']*100.0
+            data_matrix[row.Index]['off_eff_1'] = team_stats[row.LTeamID]['points']/team_stats[row.LTeamID]['possesions']*100.0
             data_matrix[row.Index]['off_eff_0'] = team_stats[row.WTeamID]['points']/team_stats[row.WTeamID]['possesions']*100.0
 
             if team_stats[row.LTeamID]['possesions'] == -1:
@@ -566,8 +550,10 @@ def getDataMatrix(years):
 
 
             #Update basic statistics
-            team_stats[row.LTeamID]['possesions'] += row.LFGA-row.LOR+row.LTO+(.4*row.LFTA)
-            team_stats[row.WTeamID]['possesions'] += row.WFGA-row.WOR+row.WTO+(.4*row.WFTA)
+            poss_1 = row.LFGA-row.LOR+row.LTO+(.4*row.LFTA)
+            poss_0 = row.WFGA-row.WOR+row.WTO+(.4*row.WFTA)
+            team_stats[row.LTeamID]['possesions'] += poss_1
+            team_stats[row.WTeamID]['possesions'] += poss_0
             team_stats[row.LTeamID]['games'] += 1
             team_stats[row.WTeamID]['games'] += 1
             team_stats[row.LTeamID]['points'] += row.LScore
