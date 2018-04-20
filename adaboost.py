@@ -2,16 +2,16 @@
 # adaboost.py
 #   - Classify data into wins/losses with AdaBoost algorithm.
 #
-# Validation accuracy: 0.9614197530864198
-# Testing accuracy: 0.9402985074626866
+# Mean validation accuracy: 0.673804012345679
+# Testing accuracy: 0.6567164179104478
+# Best estimators found: 75
 #
 
 import os
 import pickle
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.metrics import accuracy_score, roc_curve, auc
+from sklearn.metrics import accuracy_score
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV
