@@ -2,17 +2,18 @@
 # random_forest.py
 #   - Classify data into wins/losses with random forest.
 #
-# Validation accuracy: 0.9783950617283951
-# Testing accuracy: 0.9850746268656716
+# Mean validation accuracy: 0.6739969135802469
+# Testing accuracy: 0.7014925373134329
+# Best estimators found: 55
 #
 
 import os
 import pickle
 import pandas as pd
-from sklearn.metrics import accuracy_score, roc_curve, auc
+from sklearn.metrics import accuracy_score
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from utils import remove_init_rows, get_data_and_labels, get_tournament
+from sklearn.model_selection import GridSearchCV
+from utils import remove_init_rows, get_data_and_labels, drop_irrelevant_columns, get_tourney_reg_season
 
 
 def main():
@@ -22,10 +23,9 @@ def main():
     filename = "data_matrices/DataMatrices/2017dataMatrix.csv"
     df = pd.read_csv(filename)
     df = remove_init_rows(df)
-    data, labels = get_data_and_labels(df)
-
-    X, X_test, y, y_test = get_tournament(data, labels)
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.25)
+    reg_season_df, tourney_df = get_tourney_reg_season(df)
+    X, y = get_data_and_labels(drop_irrelevant_columns(reg_season_df))
+    X_test, y_test = get_data_and_labels(drop_irrelevant_columns(tourney_df))
 
     model_file = os.path.join(".", "models", "random_forest.pkl")
     if os.path.isfile(model_file):
@@ -33,14 +33,21 @@ def main():
             clf = pickle.load(fptr)
 
     else:
-        clf = RandomForestClassifier(n_estimators=50)
-        clf.fit(X_train, y_train)
+        rf = RandomForestClassifier(n_estimators=50)
+        clf = GridSearchCV(rf,
+                           {
+                                'n_estimators': [i for i in range(40, 61, 5)]
+                           },
+                           n_jobs=-1,
+                           cv=5)
+        clf.fit(X, y)
 
         with open(model_file, 'wb') as fptr:
             pickle.dump(clf, fptr)
 
-    print("Validation accuracy: {}".format(accuracy_score(y_val, clf.predict(X_val))))
+    print("Mean validation accuracy: {}".format(clf.best_score_))
     print("Testing accuracy: {}".format(accuracy_score(y_test, clf.predict(X_test))))
+    print("Best estimators found: {}".format(clf.best_params_['n_estimators']))
 
 
 if __name__ == '__main__':

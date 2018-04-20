@@ -26,7 +26,6 @@ def main():
     df = pd.read_csv(filename)
     df = remove_init_rows(df)
     reg_season_df, tourney_df = get_tourney_reg_season(df)
-
     X, y = get_data_and_labels(drop_irrelevant_columns(reg_season_df))
     X_test, y_test = get_data_and_labels(drop_irrelevant_columns(tourney_df))
 
