@@ -193,6 +193,9 @@ def glicko_rounds(glicko, preds, df):
         w = row.WTeamID
         l = row.LTeamID
 
+        #
+        # Get ratings and append to win/loss lists before we update to prevent leakage.
+        #
         w_rating, l_rating = glicko[w].getRating(), glicko[l].getRating()
         w_rd, l_rd = glicko[w].getRd(), glicko[l].getRd()
 

@@ -9,7 +9,7 @@
 import os
 import pickle
 import pandas as pd
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, roc_curve, auc
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from utils import remove_init_rows, get_data_and_labels, get_tournament
@@ -19,7 +19,7 @@ def main():
     """
     Main entry point.
     """
-    filename = "data_matrices/2017season.csv"
+    filename = "data_matrices/DataMatrices/2017dataMatrix.csv"
     df = pd.read_csv(filename)
     df = remove_init_rows(df)
     data, labels = get_data_and_labels(df)

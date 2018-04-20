@@ -50,7 +50,8 @@ def drop_irrelevant_columns(df):
     :param df: pd.DataFrame.
     :return: pd.DataFrame.
     """
-    return df.drop(['Unnamed: 0', 'year', 'id_0', 'id_1'], axis=1)
+
+    return df.drop(['Unnamed: 0', 'tourny', 'year', 'id_0', 'id_1'], axis=1)
 
 
 def get_data_and_labels(df):
@@ -72,11 +73,23 @@ def apply_preprocessing(data):
     pass
 
 
-def get_tournament(data, labels):
+def get_tourney_reg_season(df):
     """
-    Get only the NCAA tournament part of the data.
-    :param data: numpy.ndarray, N x M
-    :param labels: numpy.ndarray, N x 1
-    :return: numpy.ndarray, numpy.ndarray
+    Separate out the tournament and regular season data.
+    :param df: pandas.DataFrame
+    :return: (pandas.DataFrame, pandas.DataFrame)
     """
-    return data[67:, :], data[:67, :],  labels[67:], labels[:67]
+    return df[df.tourny == 0], df[df.tourny == 1]
+
+
+
+
+def predict_tournament_serial(df, predictor):
+    """
+    Predict the tournament in order from the beginning.
+    If we don't have
+    :param df: pandas.DataFrame, the tournament data.
+    :param predictor: sklearn.BaseEstimator.
+    :return: float, serial accuracy.
+    """
+    pass

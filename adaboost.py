@@ -8,27 +8,27 @@
 
 import os
 import pickle
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, roc_curve, auc
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import train_test_split
-from utils import remove_init_rows, get_data_and_labels, get_tournament, drop_irrelevant_columns
+from sklearn.model_selection import GridSearchCV
+from utils import remove_init_rows, get_data_and_labels, get_tourney_reg_season, drop_irrelevant_columns
 
 
 def main():
     """
     Main entry point.
     """
-    filename = "data_matrices/2017season.csv"
+    filename = "data_matrices/DataMatrices/2017dataMatrix.csv"
     df = pd.read_csv(filename)
     df = remove_init_rows(df)
-    df = drop_irrelevant_columns(df)
-    data, labels = get_data_and_labels(df)
+    reg_season_df, tourney_df = get_tourney_reg_season(df)
 
-    X, X_test, y, y_test = get_tournament(data, labels)
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.25)
+    X, y = get_data_and_labels(drop_irrelevant_columns(reg_season_df))
+    X_test, y_test = get_data_and_labels(drop_irrelevant_columns(tourney_df))
 
     model_file = os.path.join(".", "models", "adaboost.pkl")
     if os.path.isfile(model_file):
@@ -36,16 +36,23 @@ def main():
             clf = pickle.load(fptr)
 
     else:
-        clf = AdaBoostClassifier(DecisionTreeClassifier(max_depth=1), n_estimators=250)
-        clf.fit(X_train, y_train)
+        ada = AdaBoostClassifier(DecisionTreeClassifier(max_depth=1))
+        clf = GridSearchCV(ada,
+                           {
+                                'n_estimators': [50, 75, 100, 125, 150, 175, 200, 225, 250]
+                           },
+                           n_jobs=-1,
+                           cv=5)
+        clf.fit(X, y)
 
         with open(model_file, 'wb') as fptr:
             pickle.dump(clf, fptr)
 
-    print("Validation accuracy: {}".format(accuracy_score(y_val, clf.predict(X_val))))
+    print("Mean validation accuracy: {}".format(clf.best_score_))
     print("Testing accuracy: {}".format(accuracy_score(y_test, clf.predict(X_test))))
+    print("Best estimators found: {}".format(clf.best_params_['n_estimators']))
 
-    importance_pairs = list(zip(df.columns.values, clf.feature_importances_))
+    importance_pairs = list(zip(drop_irrelevant_columns(df).columns.values, clf.best_estimator_.feature_importances_))
 
     zeros = importance_pairs[:len(importance_pairs) // 2]
     ones = importance_pairs[len(importance_pairs) // 2:]
@@ -56,7 +63,13 @@ def main():
         pairs_unique.append((name[:-2], val_0 + val_1))
 
     pairs_unique = sorted(pairs_unique, key=lambda x: x[1], reverse=True)
-    features, importances = zip(*pairs_unique)
+
+    pairs_nonzero = []
+    for pair in pairs_unique:
+        if pair[1] > 0:
+            pairs_nonzero.append(pair)
+
+    features, importances = zip(*pairs_nonzero)
 
     indx = [i for i in range(len(features))]
 
