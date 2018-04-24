@@ -14,4 +14,4 @@ new_df = df.loc[df['year'] != year_to_delete]
 new_df.to_csv(filename)
 script = "rm temp.csv"
 call(script, shell = True)
-print("Removed year except {}".format(year_to_delete))
+print("Removed year {}".format(year_to_delete))
