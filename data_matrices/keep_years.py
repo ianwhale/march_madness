@@ -1,4 +1,4 @@
-#Call as python3 remove_year.py FILENAME YEAR_TO_DELETE
+#Keeps only data from the last year specified in the filename(For training over multiple years)
 
 import numpy as np
 import pandas as pd

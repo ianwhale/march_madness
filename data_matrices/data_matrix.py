@@ -309,7 +309,25 @@ def make_row(team_stats, team_results, glicko, id0, id1, year, tourny = -1, labe
     row = row[cols]
     return row
 
+def glicko_rounds(glicko, preds, df):
+    for row in df.itertuples():
+        w = row.WTeamID
+        l = row.LTeamID
 
+        w_rating, l_rating = glicko[w].getRating(), glicko[l].getRating()
+        w_rd, l_rd = glicko[w].getRd(), glicko[l].getRd()
+
+        #
+        # We are predicting if the team with the lower ID wins.
+        # Glicko would predict the lower ID team to win if their glicko score was higher.
+        #
+        if w_rating > l_rating:
+            preds.append(1.)
+        else:
+            preds.append(0.)
+
+        glicko[w].update_player([l_rating], [l_rd], [1])
+        glicko[l].update_player([w_rating], [w_rd], [0])
 
 def getDataMatrix(years):
     df_reg_season = pd.read_csv('data/RegularSeasonDetailedResults.csv')
@@ -322,6 +340,41 @@ def getDataMatrix(years):
 
     team_ids = set(df_sp.WTeamID).union(set(df_sp.LTeamID))
     glicko = dict(zip(list(team_ids), [Player() for _ in range(len(team_ids))]))
+    team_results = {}
+    team_stats = {}
+    for id in team_ids:
+        team_results[id] = []
+        team_stats[id] = {'games': 0.0, 'points': 0.0, 'fgm': 0.0, 'fga': 0.0, 'fgm3': 0.0, 'fga3': 0.0, 'ftm': 0.0, 'fta': 0.0, 'or': 0.0, 'dr': 0.0, 'to': 0.0, 'ast': 0.0, 'stl': 0.0, 'blk': 0.0, 'pf': 0.0,'opp_points': 0.0, 'opp_fgm': 0.0, 'opp_fga': 0.0, 'opp_fgm3': 0.0, 'opp_fga3': 0.0, 'opp_ftm': 0.0, 'opp_fta': 0.0, 'opp_or': 0.0, 'opp_dr': 0.0, 'opp_to': 0.0, 'opp_ast': 0.0, 'opp_stl': 0.0, 'opp_blk': 0.0, 'opp_pf': 0.0, 'possesions': 0}
+
+    data_matrix = pd.DataFrame()
+
+    for row in df_sp.itertuples():
+        data_matrix = data_matrix.append(make_row(team_stats, team_results, glicko, min(row.WTeamID, row.LTeamID), max(row.WTeamID, row.LTeamID), row.Season, row.tourny, 1 if row.WTeamID > row.LTeamID else 0))
+        team_stats, team_results, glicko = update_stats(team_stats, team_results, glicko, row)
+
+    return data_matrix
+
+
+def getGlickoDataMatrix(years):
+    glicko_df_reg = pd.read_csv('./data/RegularSeasonCompactResults.csv')
+    glicko_df_tourny = pd.read_csv('./data/NCAATourneyCompactResults.csv')
+    glicko_df = pd.concat([glicko_df_reg,glicko_df_tourny])
+    glicko_df.sort_values(by=['Season','DayNum'])
+    glicko_years = list(range(1985, min(years)))
+    glicko_df_sp = glicko_df.loc[glicko_df['Season'].isin(glicko_years)]
+    team_ids = set(glicko_df.WTeamID).union(set(glicko_df.LTeamID))
+    glicko = dict(zip(list(team_ids), [Player() for _ in range(len(team_ids))]))
+    preds = []
+    glicko_rounds(glicko, preds, glicko_df_sp)
+
+    df_reg_season = pd.read_csv('data/RegularSeasonDetailedResults.csv')
+    df_reg_season['tourny'] = 0
+    df_ncaa_tourny = pd.read_csv('data/NCAATourneyDetailedResults.csv')
+    df_ncaa_tourny['tourny'] = 1
+    df = pd.concat([df_reg_season,df_ncaa_tourny])
+    df.sort_values(by=['Season','DayNum'])
+    df_sp = df.loc[df['Season'].isin(years)]
+
     team_results = {}
     team_stats = {}
     for id in team_ids:
