@@ -2,9 +2,24 @@
 # adaboost.py
 #   - Classify data into wins/losses with AdaBoost algorithm.
 #
+# 2017 Data Results
 # Mean validation accuracy: 0.673804012345679
 # Testing accuracy: 0.6567164179104478
 # Best estimators found: 75
+#
+# 2014 - 2017 Data Results
+# Mean validation accuracy: 0.6804448563484709
+# Testing accuracy: 0.6716417910447762
+# Best estimators found: 225
+#
+# 4 Seasons Combined
+# Mean validation accuracy: 0.6912350597609562
+# Testing accuracy: 0.7084917617237009
+# Best estimators found: 50
+#
+# Old Glicko 2017
+#
+#
 #
 
 import os
@@ -22,7 +37,7 @@ def main():
     """
     Main entry point.
     """
-    filename = "data_matrices/DataMatrices/2017dataMatrix.csv"
+    filename = "data_matrices/DataMatrices/4_seasons/4_seasons_combined.csv"
     df = pd.read_csv(filename)
     df = remove_init_rows(df)
     reg_season_df, tourney_df = get_tourney_reg_season(df)
@@ -38,7 +53,7 @@ def main():
         ada = AdaBoostClassifier(DecisionTreeClassifier(max_depth=1))
         clf = GridSearchCV(ada,
                            {
-                                'n_estimators': [50, 75, 100, 125, 150, 175, 200, 225, 250]
+                                'n_estimators': [25, 35, 50, 65, 75]
                            },
                            n_jobs=-1,
                            cv=5)

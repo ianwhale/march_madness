@@ -50,8 +50,14 @@ def drop_irrelevant_columns(df):
     :param df: pd.DataFrame.
     :return: pd.DataFrame.
     """
+    irrel = []
+    for val in df.columns.values:
+        if "unnamed" in val.lower():
+            irrel.append(val)
 
-    return df.drop(['Unnamed: 0', 'tourny', 'year', 'id_0', 'id_1'], axis=1)
+    irrel += ['tourny', 'year', 'id_0', 'id_1']
+
+    return df.drop(irrel, axis=1)
 
 
 def get_data_and_labels(df):

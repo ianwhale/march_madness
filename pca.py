@@ -1,16 +1,17 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
-from utils import remove_init_rows, get_data_and_labels
+from utils import remove_init_rows, get_data_and_labels, drop_irrelevant_columns
 
 
 def main():
     """
     Main entry point.
     """
-    filename = "data_matrices/DataMatrices/2017dataMatrix.csv"
+    filename = "data_matrices/DataMatrices/4_seasons/2014-2017dataMatrix.csv"
     df = pd.read_csv(filename)
     df = remove_init_rows(df)
+    df = drop_irrelevant_columns(df)
     data, labels = get_data_and_labels(df)
 
     pca = PCA(n_components=2)

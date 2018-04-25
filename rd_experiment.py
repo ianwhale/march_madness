@@ -29,6 +29,7 @@ def main():
         reg_s = reg.loc[reg.Season > start_year - 1]
         cf_s = cf_tourney.loc[cf_tourney.Season > start_year - 1]
         ncaa_train = ncaa_tourney.loc[ncaa_tourney.Season > start_year]
+        ncaa_train = ncaa_train.loc[ncaa_train.Season != end_year]
         ncaa_test = ncaa_tourney.loc[ncaa_tourney.Season == end_year]
 
         team_ids = set(reg_s.WTeamID).union(set(reg_s.LTeamID))
@@ -36,7 +37,7 @@ def main():
 
         glicko_rounds(glicko, [], reg_s)        # Update glickos on regular season data.
         glicko_rounds(glicko, [], cf_s)         # Update on conference tournament.
-        glicko_rounds(glicko, [], ncaa_train)   # Update on previous NCAA tournaments (may be empty).
+        glicko_rounds(glicko, [], ncaa_train)   # Update on previous NCAA tournaments (may be empty if start_year).
 
         predictions = []
         glicko_rounds(glicko, predictions, ncaa_test)  # Test the predictive quality of glicko training.
