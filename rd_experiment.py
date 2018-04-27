@@ -18,7 +18,6 @@ def main():
     end_year = 2017  # We are predicting the results of the 2017 tournament.
 
     reg = pd.read_csv('./data/RegularSeasonCompactResults.csv')
-    cf_tourney = pd.read_csv('./data/ConferenceTourneyGames.csv')
     ncaa_tourney = pd.read_csv('./data/NCAATourneyCompactResults.csv')
     start_years = range(1985, end_year + 1)
     plot_years = [end_year, end_year - 1, end_year - 5, end_year - 10, 1985]
@@ -27,17 +26,12 @@ def main():
     accuracies = {}  # Accuracy on the "end_year" NCAA tournament
     for start_year in start_years:
         reg_s = reg.loc[reg.Season > start_year - 1]
-        cf_s = cf_tourney.loc[cf_tourney.Season > start_year - 1]
-        ncaa_train = ncaa_tourney.loc[ncaa_tourney.Season > start_year]
-        ncaa_train = ncaa_train.loc[ncaa_train.Season != end_year]
         ncaa_test = ncaa_tourney.loc[ncaa_tourney.Season == end_year]
 
         team_ids = set(reg_s.WTeamID).union(set(reg_s.LTeamID))
         glicko = {team_id: Player() for team_id in team_ids}
 
-        glicko_rounds(glicko, [], reg_s)        # Update glickos on regular season data.
-        glicko_rounds(glicko, [], cf_s)         # Update on conference tournament.
-        glicko_rounds(glicko, [], ncaa_train)   # Update on previous NCAA tournaments (may be empty if start_year).
+        glicko_rounds(glicko, [], reg_s)  # Update glickos on regular season data (includes conference tournament).
 
         predictions = []
         glicko_rounds(glicko, predictions, ncaa_test)  # Test the predictive quality of glicko training.
