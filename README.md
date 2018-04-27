@@ -36,5 +36,5 @@ possible---and therefore data from further in the past---is more beneficial.
 
 See `spending_experiment.py`. A simple experiment to see how well correlated the
 all-time rating (calculated with Glicko-2 beginning from 1985) of the top 25 
-teams. We remove a few outliers through Tukey fences and show, unsurprisingly, 
+teams is with Men's Basketball spending. We remove a few outliers through Tukey fences and show, unsurprisingly, 
 a correlation of `r = 0.6058` between Glicko-2 and 2017 Men's Basketball spending.
