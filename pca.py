@@ -8,7 +8,7 @@ def main():
     """
     Main entry point.
     """
-    filename = "data_matrices/DataMatrices/4_seasons/2014-2017dataMatrix.csv"
+    filename = "data_matrices/DataMatrices/4_seasons/4_seasons_combined.csv"
     df = pd.read_csv(filename)
     df = remove_init_rows(df)
     df = drop_irrelevant_columns(df)
@@ -20,7 +20,7 @@ def main():
     print()
 
     for i, color in zip([0, 1], ["navy", "darkorange"]):
-        plt.scatter(projected[labels == i, 0], projected[labels == i, 1], alpha=0.8, color=color)
+        plt.scatter(projected[labels == i, 0], projected[labels == i, 1], alpha=0.5, color=color)
 
     plt.xlabel("PC1 ({:.4}%) ".format(pca.explained_variance_ratio_[0] * 100))
     plt.ylabel("PC2 ({:.4}%)".format(pca.explained_variance_ratio_[1] * 100))
