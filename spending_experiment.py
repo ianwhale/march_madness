@@ -48,6 +48,7 @@ def main():
     spendings = list(spending2017.values())
 
     if remove_outliers:
+        # Calculate the Tukey fences.
         k = 1.5
         q1, q3 = np.percentile(spendings, [25, 75])
         iqr = q3 - q1
@@ -57,7 +58,6 @@ def main():
     assert N == len(spending2017)
 
     df, glicko_dict = append_glicko(pd.read_csv('./data/RegularSeasonCompactResults.csv'))
-    teams = pd.read_csv('./data/Teams.csv')
     top_N = sorted(glicko_dict.items(), key=lambda x: x[1].getRating(), reverse=True)[:N]
     top_N_ids, top_N_glicko = [i[0] for i in top_N], [i[1].getRating() for i in top_N]
     ordered_spending = [spending2017[tid] for tid in top_N_ids]
@@ -81,9 +81,6 @@ def main():
     ax = fig.add_subplot(111)
     for tid, glicko, spending in zip(top_N_ids, top_N_glicko, ordered_spending):
         ax.scatter(spending, glicko, c='b')
-        # ax.annotate(str(teams.loc[teams.TeamID == tid].TeamName.values[0]),
-        #            xy=(spending, glicko),
-        #             xytext=(spending + 1e-5 * spending, glicko + 1e-3 * glicko))
 
     z = np.polyfit(ordered_spending, top_N_glicko, 1)
     p = np.poly1d(z)
