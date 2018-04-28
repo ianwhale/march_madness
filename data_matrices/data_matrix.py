@@ -352,7 +352,7 @@ def getDataMatrix(years):
         data_matrix = data_matrix.append(make_row(team_stats, team_results, glicko, min(row.WTeamID, row.LTeamID), max(row.WTeamID, row.LTeamID), row.Season, row.tourny, 1 if row.WTeamID > row.LTeamID else 0))
         team_stats, team_results, glicko = update_stats(team_stats, team_results, glicko, row)
 
-    return data_matrix
+    return data_matrix, team_stats, team_results, glicko
 
 
 def getGlickoDataMatrix(years):
