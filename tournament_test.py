@@ -20,11 +20,13 @@ def higher_glicko_wins(t1,t2):
 #Need to specify path for calculation of team stats, results and glicko scores
 path = "./data_matrices/DataMatrices/1_seasons/"
 filename = '1_seasons_combined.csv'
-year = 2017
 
 #make prediction function as shown in examples above
 prediction_function = higher_glicko_wins
 
-b = Bracket(path,filename,year)
-b.play_tournament(prediction_function)
-print("Score: ", b.score_tournament(prediction_function))
+#source: https://www.ncaa.com/news/basketball-men/bracket-beat/2017-01-10/march-madness-how-do-your-past-brackets-stack
+average_scores = {2011: 53.12637, 2012: 82.98597, 2013: 69.97803, 2014: 60.14319, 2015: 83.25845, 2016: 68.17819, 2017: 65.66010}
+brackets = {}
+for year in range(2011,2018):
+    brackets[year] = Bracket(path,filename,year)
+    print("{} Score: {}, Average Score: {}".format(year, brackets[year].score_tournament(prediction_function), average_scores[year]))

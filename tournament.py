@@ -6,9 +6,9 @@ sys.path.insert(0, 'data_matrices/')
 from data_matrix import make_row
 
 class Bracket:
-    bracket = [[[[[["W01","W16"], ["W08", "W09"]], [["W05", "W12"], ["W04", "W13"]]], [[["W06","W11"], ["W03","W14"]], [["W07", "W10"], ["W02", "W15"]]]], [[[["X01","X16"], ["X08", "X09"]], [["X05", "X12"], ["X04", "X13"]]], [[["X06","X11"], ["X03","X14"]], [["X07", "X10"], ["X02", "X15"]]]]], [[[[["Y01","Y16"], ["Y08", "Y09"]], [["Y05", "Y12"], ["Y04", "Y13"]]], [[["Y06","Y11"], ["Y03","Y14"]], [["Y07", "Y10"], ["Y02", "Y15"]]]], [[[["Z01","Z16"], ["Z08", "Z09"]], [["Z05", "Z12"], ["Z04", "Z13"]]], [[["Z06","Z11"], ["Z03","Z14"]], [["Z07", "Z10"], ["Z02", "Z15"]]]]]]
-    original_bracket = [[[[[["W01","W16"], ["W08", "W09"]], [["W05", "W12"], ["W04", "W13"]]], [[["W06","W11"], ["W03","W14"]], [["W07", "W10"], ["W02", "W15"]]]], [[[["X01","X16"], ["X08", "X09"]], [["X05", "X12"], ["X04", "X13"]]], [[["X06","X11"], ["X03","X14"]], [["X07", "X10"], ["X02", "X15"]]]]], [[[[["Y01","Y16"], ["Y08", "Y09"]], [["Y05", "Y12"], ["Y04", "Y13"]]], [[["Y06","Y11"], ["Y03","Y14"]], [["Y07", "Y10"], ["Y02", "Y15"]]]], [[[["Z01","Z16"], ["Z08", "Z09"]], [["Z05", "Z12"], ["Z04", "Z13"]]], [[["Z06","Z11"], ["Z03","Z14"]], [["Z07", "Z10"], ["Z02", "Z15"]]]]]]
     def __init__(self, path, filename, year):
+        self.bracket = [[[[[["W01","W16"], ["W08", "W09"]], [["W05", "W12"], ["W04", "W13"]]], [[["W06","W11"], ["W03","W14"]], [["W07", "W10"], ["W02", "W15"]]]], [[[["X01","X16"], ["X08", "X09"]], [["X05", "X12"], ["X04", "X13"]]], [[["X06","X11"], ["X03","X14"]], [["X07", "X10"], ["X02", "X15"]]]]], [[[[["Y01","Y16"], ["Y08", "Y09"]], [["Y05", "Y12"], ["Y04", "Y13"]]], [[["Y06","Y11"], ["Y03","Y14"]], [["Y07", "Y10"], ["Y02", "Y15"]]]], [[[["Z01","Z16"], ["Z08", "Z09"]], [["Z05", "Z12"], ["Z04", "Z13"]]], [[["Z06","Z11"], ["Z03","Z14"]], [["Z07", "Z10"], ["Z02", "Z15"]]]]]]
+        self.original_bracket = [[[[[["W01","W16"], ["W08", "W09"]], [["W05", "W12"], ["W04", "W13"]]], [[["W06","W11"], ["W03","W14"]], [["W07", "W10"], ["W02", "W15"]]]], [[[["X01","X16"], ["X08", "X09"]], [["X05", "X12"], ["X04", "X13"]]], [[["X06","X11"], ["X03","X14"]], [["X07", "X10"], ["X02", "X15"]]]]], [[[[["Y01","Y16"], ["Y08", "Y09"]], [["Y05", "Y12"], ["Y04", "Y13"]]], [[["Y06","Y11"], ["Y03","Y14"]], [["Y07", "Y10"], ["Y02", "Y15"]]]], [[[["Z01","Z16"], ["Z08", "Z09"]], [["Z05", "Z12"], ["Z04", "Z13"]]], [[["Z06","Z11"], ["Z03","Z14"]], [["Z07", "Z10"], ["Z02", "Z15"]]]]]]
         file = path+filename
         self.path = path
         self.file = file
@@ -116,6 +116,7 @@ class Bracket:
         team_names = self.team_names
         file = self.file
         path = self.path
+        year = self.year
         self.replace_seeds(dict(zip(list(team_seeds[team_seeds['Season'] == year]['Seed']), list([Team(i,file,year,team_names,team_seeds,path) for i in list(team_seeds[team_seeds['Season'] == year]['TeamID'])]))))
 
     def correct_bracket(self):
@@ -171,27 +172,27 @@ class Bracket:
         self.play_round(prediction_function)
         predicted_teams = set([g.name for g in self.get_teams()])
         actual_teams = set([team_names[team_names['TeamID'] == tournament.iloc[i]['id_0']].iloc[0]['TeamName'] for i in range(32,48)] + [team_names[team_names['TeamID'] == tournament.iloc[i]['id_1']].iloc[0]['TeamName'] for i in range(32,48)])
-        points += 10*len(predicted_teams.intersection(actual_teams))
+        points += 1*len(predicted_teams.intersection(actual_teams))
         #Sweet 16
         self.play_round(prediction_function)
         predicted_teams = set([g.name for g in self.get_teams()])
         actual_teams = set([team_names[team_names['TeamID'] == tournament.iloc[i]['id_0']].iloc[0]['TeamName'] for i in range(48,56)] + [team_names[team_names['TeamID'] == tournament.iloc[i]['id_1']].iloc[0]['TeamName'] for i in range(48,56)])
-        points += 20*len(predicted_teams.intersection(actual_teams))
+        points += 2*len(predicted_teams.intersection(actual_teams))
         #Elite Eight
         self.play_round(prediction_function)
         predicted_teams = set([g.name for g in self.get_teams()])
         actual_teams = set([team_names[team_names['TeamID'] == tournament.iloc[i]['id_0']].iloc[0]['TeamName'] for i in range(56,60)] + [team_names[team_names['TeamID'] == tournament.iloc[i]['id_1']].iloc[0]['TeamName'] for i in range(56,60)])
-        points += 40*len(predicted_teams.intersection(actual_teams))
+        points += 4*len(predicted_teams.intersection(actual_teams))
         #Final Four
         self.play_round(prediction_function)
         predicted_teams = set([g.name for g in self.get_teams()])
         actual_teams = set([team_names[team_names['TeamID'] == tournament.iloc[i]['id_0']].iloc[0]['TeamName'] for i in range(60,62)] + [team_names[team_names['TeamID'] == tournament.iloc[i]['id_1']].iloc[0]['TeamName'] for i in range(60,62)])
-        points += 80*len(predicted_teams.intersection(actual_teams))
+        points += 8*len(predicted_teams.intersection(actual_teams))
         #National Champianship
         self.play_round(prediction_function)
         predicted_teams = set([g.name for g in self.get_teams()])
         actual_teams = set([team_names[team_names['TeamID'] == tournament.iloc[i]['id_0']].iloc[0]['TeamName'] for i in range(62,63)] + [team_names[team_names['TeamID'] == tournament.iloc[i]['id_1']].iloc[0]['TeamName'] for i in range(62,63)])
-        points += 160*len(predicted_teams.intersection(actual_teams))
+        points += 16*len(predicted_teams.intersection(actual_teams))
         #Winner
         self.play_round(prediction_function)
         predicted_teams = set([g.name for g in self.get_teams()])
@@ -199,7 +200,7 @@ class Bracket:
             actual_teams = set([team_names[team_names['TeamID'] == tournament.iloc[62]['id_0']].iloc[0]['TeamName']])
         else:
             actual_teams = set([team_names[team_names['TeamID'] == tournament.iloc[62]['id_1']].iloc[0]['TeamName']])
-        points += 320*len(predicted_teams.intersection(actual_teams))
+        points += 32*len(predicted_teams.intersection(actual_teams))
         return points
 
 class Team:
