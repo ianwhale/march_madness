@@ -25,8 +25,29 @@ filename = '1_seasons_combined.csv'
 prediction_function = higher_glicko_wins
 
 #source: https://www.ncaa.com/news/basketball-men/bracket-beat/2017-01-10/march-madness-how-do-your-past-brackets-stack
-average_scores = {2011: 53.12637, 2012: 82.98597, 2013: 69.97803, 2014: 60.14319, 2015: 83.25845, 2016: 68.17819, 2017: 65.66010}
+#2018 source: ESPN Tournament Challenge app has a bracket getting a 60 as 50.5 percentile
+average_scores = {2011: 53.12637, 2012: 82.98597, 2013: 69.97803, 2014: 60.14319, 2015: 83.25845, 2016: 68.17819, 2017: 65.66010, 2018: 59.9}
 brackets = {}
-for year in range(2011,2018):
+for year in range(2003,2018):
     brackets[year] = Bracket(path,filename,year)
-    print("{} Score: {}, Average Score: {}".format(year, brackets[year].score_tournament(prediction_function), average_scores[year]))
+    if year in average_scores:
+        print("{} Score: {}, Average Score: {}".format(year, brackets[year].score_tournament(prediction_function), average_scores[year]))
+    else:
+        print("{} Score: {}".format(year, brackets[year].score_tournament(prediction_function)))
+
+path = "./data_matrices/DataMatrices/2_seasons/"
+filename = '2_seasons_combined.csv'
+
+#make prediction function as shown in examples above
+prediction_function = higher_glicko_wins
+
+#source: https://www.ncaa.com/news/basketball-men/bracket-beat/2017-01-10/march-madness-how-do-your-past-brackets-stack
+#2018 source: ESPN Tournament Challenge app has a bracket getting a 60 as 50.5 percentile
+average_scores = {2011: 53.12637, 2012: 82.98597, 2013: 69.97803, 2014: 60.14319, 2015: 83.25845, 2016: 68.17819, 2017: 65.66010, 2018: 59.9}
+brackets = {}
+for year in range(2004,2018):
+    brackets[year] = Bracket(path,filename,year)
+    if year in average_scores:
+        print("{} Score: {}, Average Score: {}".format(year, brackets[year].score_tournament(prediction_function), average_scores[year]))
+    else:
+        print("{} Score: {}".format(year, brackets[year].score_tournament(prediction_function)))
