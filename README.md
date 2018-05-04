@@ -1,6 +1,6 @@
 # CSE802 Project
 
-This is a project focused on predicting the outcome of the NCAA Tournament using past regular season data.
+This is a project focused on predicting the outcome of the NCAA Men's Basketball Tournament using past regular season data.
 
 # Description of Experiments
 
