@@ -1,6 +1,6 @@
 # CSE802 Project
 
-Predict outcome of 2018 March Madness Tournament using past results.
+This is a project focused on predicting the outcome of the NCAA Tournament using past regular season data.
 
 # Description of Experiments
 
@@ -13,6 +13,11 @@ important features to prediction with this simple ensemble method.
 
 See `cov_plot.py`. A simple exploration into the correlation of our feature set.
 
+#### Ensemble Tournnament Scoring
+
+See `ensemble_serial.py`. This script uses the ensemble methods trained in `adaboost.py` and
+`random_forest.py` to predict the 2017 NCAA Tournament in serial. Meaning, the games are predicted
+in their tournament format as if we were building a bracket.
 
 #### Principal Component Analysis
 
